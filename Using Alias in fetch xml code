@@ -1,0 +1,28 @@
+<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+  <entity name="cim_membership">
+    <attribute name="cim_membershipid" />
+    <attribute name="cim_name" />
+    <attribute name="statuscode" />
+    <attribute name="cim_gradeid" />
+    <attribute name="cim_renewaldate" />
+    <attribute name="cim_contactid" />
+    <attribute name="cim_orderid" />
+    <order attribute="cim_renewaldate" descending="true" />
+    <order attribute="cim_contactid" descending="false" />
+    <filter type="and">
+      <condition attribute="cim_membershipid" operator="eq" value="{{ contact.cim_latestmembershipid.id }}" />
+      <condition attribute="createdon" operator="le" value='{{ currentTime }}' />
+    </filter>
+    <link-entity name="product" from="productid" to="cim_gradeid" visible="false" link-type="outer" alias="gd">
+      <attribute name="productnumber" />
+    </link-entity>
+  </entity>
+</fetch>
+ endfetchxml 
+ for item in membership.results.entities 
+ assign membershipStatus = item.statuscode.value  
+ assign membershipGrade = item.cim_gradeid.name  
+ assign productCode = item['gd.productnumber']  <----------- using the alias and getting the product field within the same foreach
+ endfor 
+ else 
+ if contact 
